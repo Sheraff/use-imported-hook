@@ -1,6 +1,6 @@
 {
   "name": "use-imported-hook",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lazy load any custom hook despite rule-of-hooks.",
   "main": "index.js",
   "scripts": {
