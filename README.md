@@ -107,6 +107,14 @@ useImportedHook<T, U>(
 	```jsx
 	✅ useImportedHook(bool && import('./useHook.jsx'))
 	```
+	❗ The path passed to `import()` must be a string literal for babel to run a *static code* analysis
+
+	```jsx
+	❌ useImportedHook(bool && import(`./${hook}.jsx`))
+	```
+	```jsx
+	✅ useImportedHook(bool && import('./useHook.jsx'))
+	```
 
 - `parameters` (optional)
 
