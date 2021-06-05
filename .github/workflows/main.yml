@@ -22,7 +22,7 @@ jobs:
           
       # minify /hook
       - name: Auto Minify
-        uses: nizarmah/auto-minify@master
+        uses: anthonyftwang/minify-action@v1.0.1
 
       # Auto commits minified files to the repository
       - name: Auto committing minified files
