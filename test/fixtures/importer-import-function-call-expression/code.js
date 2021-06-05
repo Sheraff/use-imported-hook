@@ -1,6 +1,7 @@
-import { useMemo, useEffect } from 'react'
 import useImportedHook from 'use-imported-hook'
 
+
+const a = import('./hook.jsx')
 export default function useTestHook() {
-	return useImportedHook(import('./hook.jsx'))
+	return useImportedHook(a)
 }

@@ -28,14 +28,14 @@ const ExtractHooksFromImporteeVisitor = {
 			CallExpression(path) {
 				const name = path.node.callee.name
 				if(FORBIDDEN_HOOKS.includes(name)) {
-					throw new Error(FORBIDDEN_HOOK_ERROR + ': ' + name)
+					throw path.buildCodeFrameError(FORBIDDEN_HOOK_ERROR + ': ' + name)
 				} else if(ACCEPTED_HOOKS.includes(name)) {
 					const dependencies = path.node.arguments[1]
 					if(dependencies && dependencies.type === "Identifier") {
-						throw new Error(ARRAY_LITERAL_ERROR)
+						throw path.buildCodeFrameError(ARRAY_LITERAL_ERROR)
 					}
 					if(dependencies && dependencies.elements.find(el => el.type === "SpreadElement")) {
-						throw new Error(SPREAD_OPERATOR_ERROR)
+						throw path.buildCodeFrameError(SPREAD_OPERATOR_ERROR)
 					}
 					const length = dependencies
 						? dependencies.elements.filter(element => element.name !== EXTRA_DEPENDENCY_IDENTIFIER_NAME).length
@@ -50,7 +50,7 @@ const ExtractHooksFromImporteeVisitor = {
 	}
 }
 
-function readImportee(importerAbsolutePath, importeeRelativePath, state) {
+function readImportee(importerAbsolutePath, importeeRelativePath, state, parentPath) {
 	const directory = nodePath.dirname(importerAbsolutePath)
 	const fileAbsolutePath = nodePath.join(directory, importeeRelativePath)
 	const codeString = fs.readFileSync(fileAbsolutePath, {encoding: 'utf8'})
@@ -58,7 +58,7 @@ function readImportee(importerAbsolutePath, importeeRelativePath, state) {
 		sourceType: 'module',
 		plugins: ['jsx'],
 	})
-	traverse(ast, ExtractHooksFromImporteeVisitor, undefined, state);
+	traverse(ast, ExtractHooksFromImporteeVisitor, undefined, state, parentPath);
 }
 
 module.exports = readImportee

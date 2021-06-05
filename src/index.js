@@ -1,10 +1,14 @@
 const readImportee = require('./read-importee')
+const findImportStatementNode = require('./resolve-import-statement')
 const {
-	BABEL_MARKER_COMMENT,
-	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
-	ACCEPTED_HOOKS,
+  BABEL_MARKER_COMMENT,
+  EXTRA_DEPENDENCY_IDENTIFIER_NAME,
+  ACCEPTED_HOOKS,
   NO_MARKER_ERROR,
   SINGLE_ARGUMENT_ERROR,
+  NO_IMPORT_STATEMENT,
+  NO_DYNAMIC_IMPORT_PATH,
+  MULTIPLE_IMPORTS_ERROR
 } = require('./config')
 
 function transform(babel) {
@@ -18,24 +22,28 @@ function transform(babel) {
         if(path.node.callee.name !== 'useImportedHook') {
           return
         }
+        
+        // find importee path
+        const importArg = findImportStatementNode(path)
+        if(!importArg) {
+          throw path.buildCodeFrameError(NO_IMPORT_STATEMENT)
+        }
+        if (importArg.type !== "StringLiteral") {
+          throw path.buildCodeFrameError(NO_DYNAMIC_IMPORT_PATH)
+        }
+        if (this.foundImport) {
+          throw path.buildCodeFrameError(MULTIPLE_IMPORTS_ERROR)
+        }
+        this.foundImport = true
+
+        // read imported file
+        const fileRelativePath = importArg.value
+        const program = path.findParent(path => path.isProgram())
         const state = { 
           hooks: [],
           foundComment: false,
         }
-        // find importee path
-        path.traverse({
-          CallExpression(path) {
-            if(path.node.callee.type !== 'Import') {
-              return
-            }
-            const fileRelativePath = path.node.arguments[0].value
-            let program = path
-            while(program.type !== "Program") {
-              program = program.parentPath
-            }
-            readImportee(program.hub.file.opts.filename, fileRelativePath, this)
-          }
-        }, state)
+        readImportee(program.hub.file.opts.filename, fileRelativePath, state, path)
 
         // throw if imported file doesn't have BABEL_MARKER_COMMENT comment
         if(!state.foundComment) {
@@ -54,14 +62,11 @@ function transform(babel) {
         })
         path.node.arguments.splice(1, 0, reserveHooksArgument)
         
-        // add import declarations to top of document
-        let program = path
-        while(program && program.type !== "Program") {
-          program = program.parentPath
-        }
-        if(!program) {
+        if (state.hooks.length === 0) {
           return
         }
+
+        // add import declarations to top of document
         let reactImport = program.node.body.find(
           (node) => node.type === 'ImportDeclaration' && node.source.value.toLowerCase() === 'react'
         )

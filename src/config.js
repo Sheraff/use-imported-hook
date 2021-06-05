@@ -41,6 +41,17 @@ to make custom hook importable, dependencies shouldn't include any spread elemen
 
 const FORBIDDEN_HOOK_ERROR = `cannot use stateful hooks in importable custom hook`
 
+const TOO_MANY_IMPORTS = 'too many `import()` call expressions in single "useImportedHook" call'
+
+const NO_IMPORT_STATEMENT = 'could not find `import()` call expression in "useImportedHook" call'
+
+const NO_DYNAMIC_IMPORT_PATH = `
+to allow webpack to correctly chunk the imported hook, \`import()\` path must be string literal: 
+  ✅import('./myHook.jsx')
+  ❌import(pathVariable)`
+
+const MULTIPLE_IMPORTS_ERROR = "This plugin currently only supports 1 call to `useImportedHook` per file"
+
 module.exports = {
 	BABEL_MARKER_COMMENT,
 	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
@@ -51,4 +62,8 @@ module.exports = {
 	ARRAY_LITERAL_ERROR,
 	SPREAD_OPERATOR_ERROR,
 	FORBIDDEN_HOOK_ERROR,
+	TOO_MANY_IMPORTS,
+	NO_IMPORT_STATEMENT,
+	NO_DYNAMIC_IMPORT_PATH,
+	MULTIPLE_IMPORTS_ERROR,
 }
