@@ -128,6 +128,7 @@ useImportedHook<T, U>(
 ❗ Because we do static code analysis with a Babel transform plugin to achieve this result, there are a few requirements to keep in mind:
 
 - The function containing all the build-in hooks must be the default export
+- The function containing all the built-in hooks must be the default export
 	```jsx
 	❌ function withHooks() {
 	❌	useEffect(() => {/*...*/})
@@ -143,6 +144,7 @@ useImportedHook<T, U>(
 	✅ export default withHooks
 	```
 - The function containing all the build-in hooks must be labeled with a leading comment containing the exact string `@__IMPORTABLE_HOOK__`
+- The function containing all the built-in hooks must be labeled with a leading comment containing the exact string `@__IMPORTABLE_HOOK__`
 	```jsx
 	/* @__IMPORTABLE_HOOK__ */
 	export default function() {
