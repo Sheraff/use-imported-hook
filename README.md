@@ -4,17 +4,38 @@
 
 This package allows you to dynamically import any stateless hook in a React component.
 
+🎉 Lazy load a component's logic 🎉
+```jsx
+// MyComponent.jsx (importer)
+import useImportedHook from 'use-imported-hook/hook'
+
+export default function MyComponent() {
+	const [load, setLoad] = useState(false)
+	useImportedHook(
+		load && import('./useStatelessHook.jsx'),
+	)
+	return (
+		<button onClick={() => setLoad(true)}>
+			Click me
+		</button>
+	)
+}
+```
+
+🎉 Lazy load a custom hook 🎉
 ```jsx
 // useHook.jsx (importer)
 import useImportedHook from 'use-imported-hook/hook'
 
-export default function useHook({shouldLoad, ...props}) {
+export default function useHook({load, ...props}) {
 	return useImportedHook(
-		shouldLoad && import('./useStatelessHook.jsx'),
+		load && import('./useStatelessHook.jsx'),
 		props
 	)
 }
 ```
+
+🎉 And still write your importable hook like any hook you're used to 🎉
 ```jsx
 // useStatelessHook.jsx (importee)
 import { useEffect, useCallback } from 'react'
@@ -31,7 +52,8 @@ export default function useStatelessHook({a, b, c}) {
 }
 ```
 
-In the example above, `useStatelessHook` will only be loaded *if* `shouldLoad` is true. This allows you to defer the loading of most of your components' logic (everything that isn't needed for the initial render).
+
+In the examples above, `useStatelessHook` will only be loaded *if* `load` is true. This allows you to defer the loading of most of your components' logic (everything that isn't needed for the initial render).
 
 ## Setup
 
