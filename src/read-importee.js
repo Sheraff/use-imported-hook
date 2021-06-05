@@ -5,6 +5,7 @@ const traverse = require('@babel/traverse').default
 const {
 	BABEL_MARKER_COMMENT,
 	ACCEPTED_HOOKS,
+	HOOKS_WITHOUT_DEPS,
 	FORBIDDEN_HOOKS,
 	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
 	ARRAY_LITERAL_ERROR,
@@ -44,6 +45,8 @@ const ExtractHooksFromImporteeVisitor = {
 						name,
 						length
 					])
+				} else if(HOOKS_WITHOUT_DEPS.includes(name)) {
+					this.hooks.push([name, null])
 				}
 			}
 		}, this)

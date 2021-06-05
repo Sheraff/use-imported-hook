@@ -4,6 +4,7 @@ const {
   BABEL_MARKER_COMMENT,
   EXTRA_DEPENDENCY_IDENTIFIER_NAME,
   ACCEPTED_HOOKS,
+  HOOKS_WITHOUT_DEPS,
   NO_MARKER_ERROR,
   SINGLE_ARGUMENT_ERROR,
   NO_IMPORT_STATEMENT,
@@ -55,9 +56,11 @@ function transform(babel) {
         state.hooks.forEach(([hookName, depCount]) => {
           const slot = t.arrayExpression()
           slot.elements.push(t.identifier(hookName))
-          const dependencyArray = t.arrayExpression()
-          dependencyArray.elements.push(...new Array(depCount+1).fill(t.nullLiteral()))
-          slot.elements.push(dependencyArray)
+          if(depCount !== null) {
+            const dependencyArray = t.arrayExpression()
+            dependencyArray.elements.push(...new Array(depCount+1).fill(t.nullLiteral()))
+            slot.elements.push(dependencyArray)
+          }
           reserveHooksArgument.elements.push(slot)
         })
         path.node.arguments.splice(1, 0, reserveHooksArgument)

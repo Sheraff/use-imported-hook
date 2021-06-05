@@ -9,12 +9,15 @@ const ACCEPTED_HOOKS = [
 	'useImperativeHandle',
 ]
 
+const HOOKS_WITHOUT_DEPS = [
+	'useDebugValue',
+]
+
 const FORBIDDEN_HOOKS = [
 	'useState',
 	'useRef',
 	'useContext',
 	'useReducer',
-	'useDebugValue',
 ]
 
 const NO_MARKER_ERROR = `
@@ -56,6 +59,7 @@ module.exports = {
 	BABEL_MARKER_COMMENT,
 	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
 	ACCEPTED_HOOKS,
+	HOOKS_WITHOUT_DEPS,
 	FORBIDDEN_HOOKS,
 	NO_MARKER_ERROR,
 	SINGLE_ARGUMENT_ERROR,

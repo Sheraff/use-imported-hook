@@ -79,7 +79,11 @@ export default function useImportedHook(
 	if (!loaded) {
 		const empty = () => {}
 		slots.forEach(([hook, deps]) => {
-			hook(empty, [additionalDependency, ...deps])
+			if (deps) {
+				hook(empty, [additionalDependency, ...deps])
+			} else {
+				hook()
+			}
 		})
 		return defaultReturn
 	}
