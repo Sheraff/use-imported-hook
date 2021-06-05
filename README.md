@@ -1,8 +1,12 @@
 # use-imported-hook
 
+[![unit tests](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml)
+![](https://badgen.net/badge/gzip/292%20bytes/cyan)
+
+
 ## Description
 
-This package allows you to dynamically import any stateless hook in a React component.
+This package allows you to dynamically import any stateless hook in a React component!
 
 🎉 Lazy load a component's logic 🎉
 ```jsx
