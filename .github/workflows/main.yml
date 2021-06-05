@@ -19,6 +19,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+          
+      # minify /hook
       - name: Auto Minify
         uses: nizarmah/auto-minify@master
         with:
@@ -26,7 +30,7 @@ jobs:
 
       # Auto commits minified files to the repository
       - name: Auto committing minified files
-        uses: stefanzweifel/git-auto-commit-action@v3.0.0
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           repository: 'hook'
           commit_message: "Github Action: Auto Minified JS and CSS files"
