@@ -23,6 +23,11 @@ jobs:
       # minify /hook
       - name: Auto Minify
         uses: anthonyftwang/minify-action@v1.0.1
+        
+      - name: Get last commit message
+        id: last-commit-message
+        run: |
+          echo "::set-output name=msg::$(git stash && git stash drop)"
 
       # Auto commits minified files to the repository
       - name: Auto committing minified files
