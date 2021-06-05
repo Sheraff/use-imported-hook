@@ -1,0 +1,36 @@
+{
+  "name": "use-imported-hook",
+  "version": "1.0.0",
+  "description": "Lazy load any custom hook despite rule-of-hooks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jest test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sheraff/use-imported-hook.git"
+  },
+  "keywords": [
+    "react",
+    "hook",
+    "lazy",
+    "import",
+    "dynamic",
+    "babel",
+    "jsx",
+    "babel-plugin"
+  ],
+  "author": "Sheraff",
+  "funding": "https://www.buymeacoffee.com/sheraff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sheraff/use-imported-hook/issues"
+  },
+  "homepage": "https://github.com/Sheraff/use-imported-hook#readme",
+  "devDependencies": {
+    "@babel/parser": "^7.14.4",
+    "@babel/traverse": "^7.14.2",
+    "babel-plugin-tester": "^10.1.0",
+    "jest": "^27.0.4"
+  }
+}
