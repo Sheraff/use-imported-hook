@@ -135,7 +135,6 @@ useImportedHook<T, U>(
 
 ❗ Because we do static code analysis with a Babel transform plugin to achieve this result, there are a few requirements to keep in mind:
 
-- The function containing all the build-in hooks must be the default export
 - The function containing all the built-in hooks must be the default export
 	```jsx
 	❌ function withHooks() {
@@ -151,7 +150,6 @@ useImportedHook<T, U>(
 	✅ }
 	✅ export default withHooks
 	```
-- The function containing all the build-in hooks must be labeled with a leading comment containing the exact string `@__IMPORTABLE_HOOK__`
 - The function containing all the built-in hooks must be labeled with a leading comment containing the exact string `@__IMPORTABLE_HOOK__`
 	```jsx
 	/* @__IMPORTABLE_HOOK__ */
@@ -226,3 +224,31 @@ export default function useStatelessHook({a, b}) {
 	}, [a, b])
 }
 ```
+
+## Managing Webpack chunks
+
+If you have several components that will load their hooks at the same time, you can give a clue to webpack to package them together in the same chunk:
+
+```jsx
+export default function ChatComponent({userLoggedIn}) {
+	useImportedHook(userLoggedIn && import(
+		/* webpackMode: "lazy-once" */
+		/* webpackChunkName: "user-logged-in" */
+		'./useChatHook.jsx'),
+	)
+	return <></>
+}
+```
+
+```jsx
+export default function AccountSettings({userLoggedIn}) {
+	useImportedHook(userLoggedIn && import(
+		/* webpackMode: "lazy-once" */
+		/* webpackChunkName: "user-logged-in" */
+		'./useSettingsHook.jsx'),
+	)
+	return <></>
+}
+```
+
+In the above example, webpack will put both `useChatHook.jsx` and `useSettingsHook.jsx` in the same .js chunk file.
