@@ -6,5 +6,5 @@ function a() {
 }
 
 export default function useTestHook({ flag }) {
-  return useImportedHook(flag && a(), [[useEffect, [null]]]);
+  return useImportedHook(flag && a(), [[useEffect, []]]);
 }

@@ -4,5 +4,5 @@ const a = Promise.resolve()
 	.then(() => import('./hook.jsx'))
 
 export default function useTestHook({flag}) {
-	return useImportedHook(a)
+	return useImportedHook(flag && a)
 }
