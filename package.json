@@ -1,6 +1,6 @@
 {
   "name": "use-imported-hook",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lazy load any custom hook despite rule-of-hooks.",
   "main": "index.js",
   "scripts": {
@@ -11,11 +11,12 @@
     "url": "git+https://github.com/Sheraff/use-imported-hook.git"
   },
   "keywords": [
-    "react",
-    "hook",
-    "lazy",
+    "reactjs",
+    "hooks",
+    "lazy-loading",
     "import",
     "dynamic",
+    "loader",
     "babel",
     "jsx",
     "babel-plugin"

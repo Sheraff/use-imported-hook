@@ -51,109 +51,107 @@ In the example above, `useStatelessHook` will only be loaded *if* `shouldLoad` i
 	}
 	```
 
-## Usage
-1. **Syntax for `useImportedHook`**
+## Syntax for `useImportedHook`
 
-	```ts
-	useImportedHook<T, U>(
-		importPromise: false | Promise<{default: function(U): T,
-		parameters: T?,
-		defaultReturn: U?
-	): U
+```ts
+useImportedHook<T, U>(
+	importPromise: false | Promise<{default: function(U): T}>,
+	parameters: T?,
+	defaultReturn: U?
+): U
+```
+
+| Argument        | Required | Example
+| --------------- | -------- | -------------
+| `importPromise` | `true`   | `bool && import('./relative-path.jsx')`
+| `parameters`    | `false`  | `{ a, b }`
+| `defaultReturn` | `false`  | `""`
+
+<br/>
+
+**Parameters**
+- `importPromise` (required)
+
+	can either be *falsy* in which case the hook won't be loaded, or it can be a the *promise* returned by `import()`. By using it in combination with `import()`, webpack is able to package the hook in a separate chunk and to load it on demand.
+
+	❗ The path passed to `import()` must be a relative path for babel to resolve it properly
+
+	```jsx
+	❌ useImportedHook(bool && import('/src/hooks/useHook.jsx'))
+	```
+	```jsx
+	❌ useImportedHook(bool && import('@alias/useHook.jsx'))
+	```
+	```jsx
+	✅ useImportedHook(bool && import('./useHook.jsx'))
 	```
 
-	| Argument        | Required | Example
-	| --------------- | -------- | -------------
-	| `importPromise` | `true`   | `bool && import('./relative-path.jsx')`
-	| `parameters`    | `false`  | `{ a, b }`
-	| `defaultReturn` | `false`  | `""`
-	|||
+- `parameters` (optional)
 
-	<br/>
+	is optional and will default to `{}`. Do note that it is a single argument, so if you need to pass more than one thing to your hook, you can use `{a, b, c}` or `[a, b, c]`.
 
-	**Parameters**
-	- `importPromise` (required)
+- `defaultReturn` (optional)
 
-		can either be *falsy* in which case the hook won't be loaded, or it can be a the *promise* returned by `import()`. By using it in combination with `import()`, webpack is able to package the hook in a separate chunk and to load it on demand.
+	The *return* value of `useImportedHook` as long as the hook hasn't loaded yet. 
 
-		❗ The path passed to `import()` must be a relative path for babel to resolve it properly
+**Return value**
 
-		```jsx
-		❌ useImportedHook(bool && import('/src/hooks/useHook.jsx'))
-		```
-		```jsx
-		❌ useImportedHook(bool && import('@alias/useHook.jsx'))
-		```
-		```jsx
-		✅ useImportedHook(bool && import('./useHook.jsx'))
-		```
+- Initially, while `importPromise` is either falsy or pending, `useImportedHook` returns `defaultReturn`. 
 
-	- `parameters` (optional)
-
-		is optional and will default to `{}`. Do note that it is a single argument, so if you need to pass more than one thing to your hook, you can use `{a, b, c}` or `[a, b, c]`.
-
-	- `defaultReturn` (optional)
-
-		The *return* value of `useImportedHook` as long as the hook hasn't loaded yet. 
-
-	**Return value**
-	
-	- Initially, while `importPromise` is either falsy or pending, `useImportedHook` returns `defaultReturn`. 
-	
-	- Once `importPromise` resolves, `useImportedHook` will always return whatever the imported hook returns *even if `importPromise` becomes falsy once again.
+- Once `importPromise` resolves, `useImportedHook` will always return whatever the imported hook returns *even if* `importPromise` becomes falsy once again.
 
 
-2. **The imported function**
+## Syntax for the imported hook
 
-	❗ Because we do static code analysis with a Babel transform plugin to achieve this result, there are a few requirements to keep in mind:
+❗ Because we do static code analysis with a Babel transform plugin to achieve this result, there are a few requirements to keep in mind:
 
-	- The function containing all the build-in hooks must be the default export
-		```jsx
-		❌ function withHooks() {
-		❌	useEffect(() => {/*...*/})
-		❌ }
-		❌ export default function() {
-		❌	withHooks()
-		❌ }
-		```
-		```jsx
-		✅ function withHooks() {
-		✅	useEffect(() => {/*...*/})
-		✅ }
-		✅ export default withHooks
-		```
-	- The function containing all the build-in hooks must be labeled with a leading comment containing the exact string `@__IMPORTABLE_HOOK__`
-		```jsx
-		/* @__IMPORTABLE_HOOK__ */
-		export default function() {
-			useEffect(() => {/*...*/})
-		}
-		```
-	- All of your built-in hooks must be in a single function
+- The function containing all the build-in hooks must be the default export
+	```jsx
+	❌ function withHooks() {
+	❌	useEffect(() => {/*...*/})
+	❌ }
+	❌ export default function() {
+	❌	withHooks()
+	❌ }
+	```
+	```jsx
+	✅ function withHooks() {
+	✅	useEffect(() => {/*...*/})
+	✅ }
+	✅ export default withHooks
+	```
+- The function containing all the build-in hooks must be labeled with a leading comment containing the exact string `@__IMPORTABLE_HOOK__`
+	```jsx
+	/* @__IMPORTABLE_HOOK__ */
+	export default function() {
+		useEffect(() => {/*...*/})
+	}
+	```
+- All of your built-in hooks must be in a single function
 
-		```jsx
-		❌ function moreStuff() {
-		❌	useEffect(() => {
-		❌		// ...
-		❌	})
-		❌ }
+	```jsx
+	❌ function moreStuff() {
+	❌	useEffect(() => {
+	❌		// ...
+	❌	})
+	❌ }
 
-		/* @__IMPORTABLE_HOOK__ */
-		export default function useStatelessHook() {
-		❌	moreStuff()
-			return useCallback(() => { /* ... */ })
-		}
-		```
+	/* @__IMPORTABLE_HOOK__ */
+	export default function useStatelessHook() {
+	❌	moreStuff()
+		return useCallback(() => { /* ... */ })
+	}
+	```
 
-		```jsx
-		/* @__IMPORTABLE_HOOK__ */
-		export default function useStatelessHook() {
-		✅	useEffect(() => {
-		✅		// ...
-		✅	})
-			return useCallback(() => { /* ... */ })
-		}
-		```
+	```jsx
+	/* @__IMPORTABLE_HOOK__ */
+	export default function useStatelessHook() {
+	✅	useEffect(() => {
+	✅		// ...
+	✅	})
+		return useCallback(() => { /* ... */ })
+	}
+	```
 
 
 ## Limitations
