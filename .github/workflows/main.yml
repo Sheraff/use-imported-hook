@@ -1,4 +1,4 @@
-name: CI
+name: NPM publish
 
 # Controls when the action will run. 
 on:
@@ -16,31 +16,10 @@ jobs:
           
   publish:
     runs-on: ubuntu-latest
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
-      - uses: actions/checkout@v2
-          
-      # minify /hook
-      - name: Auto Minify
-        uses: anthonyftwang/minify-action@v1.0.1
-        
-      - name: Get last commit message
-        id: last-commit-message
-        run: |
-          echo "::set-output name=msg::$(git stash && git stash drop)"
-
-      # Auto commits minified files to the repository
-      - name: Auto committing minified files
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Github Action: Auto Minified JS files"
-          push_options: '--force'
-          skip_dirty_check: true
-          skip_fetch: true
-          branch: min
-          
-      # run tests
+    steps:          
       - uses: actions/checkout@v1
+      
+      # run tests
       - uses: actions/setup-node@v1
         with:
           node-version: 14
@@ -52,7 +31,9 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-      - if: steps.publish.outputs.type != 'none'
+      
+      - name: Run if version bump
+        if: steps.publish.outputs.type != 'none'
         run: |
           echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"
           
