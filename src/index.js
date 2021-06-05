@@ -58,7 +58,7 @@ function transform(babel) {
           slot.elements.push(t.identifier(hookName))
           if(depCount !== null) {
             const dependencyArray = t.arrayExpression()
-            dependencyArray.elements.push(...new Array(depCount+1).fill(t.nullLiteral()))
+            dependencyArray.elements.push(...new Array(depCount).fill(t.nullLiteral()))
             slot.elements.push(dependencyArray)
           }
           reserveHooksArgument.elements.push(slot)
