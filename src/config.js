@@ -49,7 +49,7 @@ const TOO_MANY_IMPORTS = 'too many `import()` call expressions in single "useImp
 const NO_IMPORT_STATEMENT = 'could not find `import()` call expression in "useImportedHook" call'
 
 const NO_DYNAMIC_IMPORT_PATH = `
-to allow webpack to correctly chunk the imported hook, \`import()\` path must be string literal: 
+to allow babel to correctly extract built-in hooks from the imported hook, \`import()\` path must be string literal: 
   ✅import('./myHook.jsx')
   ❌import(pathVariable)`
 
