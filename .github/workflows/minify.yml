@@ -1,0 +1,43 @@
+name: Minify hook
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+          
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          
+      # minify /hook
+      - name: Auto Minify
+        uses: anthonyftwang/minify-action@v1.0.1
+        
+#      - name: git stash drop
+#        run: |
+#          echo "::set-output name=msg::$(git stash && git stash drop)"
+
+      # Auto commits minified files to the repository
+      - name: Auto committing minified files
+        id: auto-commit-action
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Github Action: Auto Minified JS files"
+          push_options: '--force'
+          skip_dirty_check: true
+          skip_fetch: true
+          branch: min
+          
