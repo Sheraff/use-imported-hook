@@ -62,6 +62,13 @@ function isNodeStaticValue(arg) {
 		}
 		return ['ArrayExpression', elements]
 	}
+	if(arg.type === 'UnaryExpression') {
+		const value = isNodeStaticValue(arg.argument)
+		if(!value) {
+			return false
+		}
+		return ['UnaryExpression', arg.operator, value]
+	}
 	return false
 }
 
