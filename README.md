@@ -92,7 +92,7 @@ useImportedHook<T, U>(
 
 | Argument        | Required | Example
 | --------------- | -------- | -------------
-| `importPromise` | `true`   | `bool && import('./relative-path.jsx')`
+| `importPromise` | `true`   | `bool && import('./path.jsx')`
 | `parameters`    | `false`  | `{ a, b }`
 | `defaultReturn` | `false`  | `""`
 
@@ -194,6 +194,18 @@ useImportedHook<T, U>(
 		return useCallback(() => { /* ... */ })
 	}
 	```
+- An imported hook can't contain a call to `useImportedHook`
+	
+	[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues)
+
+	```jsx
+	/* @__IMPORTABLE_HOOK__ */
+	export default function useLazyHook() {
+	❌	useImportedHook(bool && import('./useOtherHook.jsx'))
+		return useCallback(() => { /* ... */ })
+	}
+	```
+
 - Not all initial values for `useState` and `useRef` can be extracted statically
 
 	[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues/3)
