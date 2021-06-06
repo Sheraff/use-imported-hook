@@ -2,7 +2,7 @@
 
 [![unit tests](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml)
 ![gzipped size](https://badgen.net/badge/gzip/341%20bytes/cyan)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues)
 
 
 ## Description
@@ -105,7 +105,7 @@ useImportedHook<T, U>(
 
 	- ❗ The path passed to `import()` must be a relative path for babel to resolve it properly
 
-		[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+		[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues/1)
 
 		```jsx
 		❌ useImportedHook(bool && import('/src/hooks/useHook.jsx'))
@@ -197,7 +197,7 @@ useImportedHook<T, U>(
 	```
 - Not all initial values for `useState` and `useRef` can be extracted statically
 
-	[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+	[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues/3)
 	- Allowed initial values
 		- ✅ `true` and `false`
 		- ✅ `0`, `1`, `2`... (all integers)
@@ -216,7 +216,7 @@ useImportedHook<T, U>(
 
 
 ## Limitation: forbidden built-in hooks
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues)
 
 Currently, only a subset of all built-in Hooks in React are supported *inside* the imported hook:
 - ✅ `useEffect`
@@ -258,7 +258,7 @@ export default function useLazyHook({a, b}) {
 ```
 
 ## Limitation: multiple `useImportedHook` per component 
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](https://github.com/Sheraff/use-imported-hook/issues/2)
 
 Currently, we don't support importing several hooks from within a single component (or hook).
 
