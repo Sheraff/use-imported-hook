@@ -6,4 +6,6 @@ import { useEffect, useCallback } from "react";
 export default function useTestHook() {
   useEffect(() => {});
   useCallback(() => {});
+  const [a, b] = useState({})
+  const yo = useRef(null)
 }

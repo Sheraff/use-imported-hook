@@ -1,5 +1,6 @@
 const BABEL_MARKER_COMMENT = '@__IMPORTABLE_HOOK__'
 const EXTRA_DEPENDENCY_IDENTIFIER_NAME = '__importableHookAdditionalDependency'
+const INITIAL_STATES_IDENTIFIER_NAME = '__importableHookInitialStates'
 
 const ACCEPTED_HOOKS = [
 	'useCallback',
@@ -13,9 +14,12 @@ const HOOKS_WITHOUT_DEPS = [
 	'useDebugValue',
 ]
 
-const FORBIDDEN_HOOKS = [
+const STATEFUL_HOOKS = [
 	'useState',
 	'useRef',
+]
+
+const FORBIDDEN_HOOKS = [
 	'useContext',
 	'useReducer',
 ]
@@ -55,11 +59,18 @@ to allow babel to correctly extract built-in hooks from the imported hook, \`imp
 
 const MULTIPLE_IMPORTS_ERROR = "This plugin currently only supports 1 call to `useImportedHook` per file"
 
+const STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE = `
+to allow babel to correctly extract built-in hooks from the imported hook, stateful hooks should have static initial states:
+  ✅useState('hey')
+  ❌useState(myVar)`
+
 module.exports = {
 	BABEL_MARKER_COMMENT,
 	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
+	INITIAL_STATES_IDENTIFIER_NAME,
 	ACCEPTED_HOOKS,
 	HOOKS_WITHOUT_DEPS,
+	STATEFUL_HOOKS,
 	FORBIDDEN_HOOKS,
 	NO_MARKER_ERROR,
 	SINGLE_ARGUMENT_ERROR,
@@ -70,4 +81,5 @@ module.exports = {
 	NO_IMPORT_STATEMENT,
 	NO_DYNAMIC_IMPORT_PATH,
 	MULTIPLE_IMPORTS_ERROR,
+	STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE
 }

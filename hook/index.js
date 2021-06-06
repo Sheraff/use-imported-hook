@@ -4,6 +4,19 @@ import {
 	useEffect,
 } from 'react'
 
+const STATELESS_HOOKS = [
+	'useCallback',
+	'useEffect',
+	'useMemo',
+	'useLayoutEffect',
+	'useImperativeHandle',
+]
+
+const STATEFUL_HOOKS = [
+	'useState',
+	'useRef',
+]
+
 /**
  * @typedef {React.useEffect | React.useCallback | React.useMemo | React.useLayoutEffect | React.useImperativeHandle} NativeHookWithDependencies
  * @typedef {Array<*> & { 0: NativeHookWithDependencies, 1: React.DependencyList, length: 2 }} Slot
@@ -75,12 +88,15 @@ export default function useImportedHook(
 	}
 
 	const additionalDependency = `${!!importPromise}${loaded}`
+	const initialStates = []
 
 	if (!loaded) {
 		const empty = () => {}
-		slots.forEach(([hook, deps]) => {
-			if (deps) {
-				hook(empty, [additionalDependency, ...deps])
+		slots.forEach(([hook, value]) => {
+			if (STATELESS_HOOKS.includes(hook.name)) {
+				hook(empty, [additionalDependency, ...new Array(value).fill(null)])
+			} else if (STATEFUL_HOOKS.includes(hook.name)) {
+				initialStates.push(hook(value))
 			} else {
 				hook()
 			}
@@ -88,5 +104,15 @@ export default function useImportedHook(
 		return defaultReturn
 	}
 
-	return importedHook.current(args, additionalDependency)
+	return importedHook.current(args, additionalDependency, initialStates)
 }
+
+
+// {
+//   name: "useEffect",
+//   value: 0,
+// },
+// {
+//   name: "useCallback",
+//   value: 0,
+// },

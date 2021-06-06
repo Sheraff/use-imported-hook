@@ -3,14 +3,18 @@ const findImportStatementNode = require('./resolve-import-statement')
 const {
   BABEL_MARKER_COMMENT,
   EXTRA_DEPENDENCY_IDENTIFIER_NAME,
+  INITIAL_STATES_IDENTIFIER_NAME,
   ACCEPTED_HOOKS,
+  STATEFUL_HOOKS,
   HOOKS_WITHOUT_DEPS,
   NO_MARKER_ERROR,
   SINGLE_ARGUMENT_ERROR,
   NO_IMPORT_STATEMENT,
   NO_DYNAMIC_IMPORT_PATH,
-  MULTIPLE_IMPORTS_ERROR
+  MULTIPLE_IMPORTS_ERROR,
+  STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE,
 } = require('./config')
+const isNodeStaticValue = require('./isNodeStaticValue')
 
 function transform(babel) {
   const { types: t } = babel
@@ -53,13 +57,11 @@ function transform(babel) {
 
         // add hooks argument to useImportedHook call
         const reserveHooksArgument = t.arrayExpression()
-        state.hooks.forEach(([hookName, depCount]) => {
+        state.hooks.forEach((descriptor) => {
           const slot = t.arrayExpression()
-          slot.elements.push(t.identifier(hookName))
-          if(depCount !== null) {
-            const dependencyArray = t.arrayExpression()
-            dependencyArray.elements.push(...new Array(depCount).fill(t.nullLiteral()))
-            slot.elements.push(dependencyArray)
+          slot.elements.push(t.identifier(descriptor.name))
+          if('kind' in descriptor) {
+            slot.elements.push(t[descriptor.kind](typeof descriptor.value === 'undefined' ? [] : descriptor.value))
           }
           reserveHooksArgument.elements.push(slot)
         })
@@ -77,12 +79,12 @@ function transform(babel) {
           reactImport = t.importDeclaration([], t.stringLiteral('react'))
           program.node.body.unshift(reactImport)
         }
-        state.hooks.forEach(([hookName]) => {
+        state.hooks.forEach(({name}) => {
           const alreadyImported = reactImport.specifiers.find(
-            specifier => specifier.type === "ImportSpecifier" && specifier.imported.name === hookName
+            specifier => specifier.type === "ImportSpecifier" && specifier.imported.name === name
           )
           if(!alreadyImported) {
-            const identifier = t.identifier(hookName)
+            const identifier = t.identifier(name)
             const specifier = t.importSpecifier(identifier, identifier)
             reactImport.specifiers.push(specifier)
           }
@@ -110,12 +112,15 @@ function transform(babel) {
         }
         if(params.length === 1) {
           params.push(t.identifier(EXTRA_DEPENDENCY_IDENTIFIER_NAME))
+          params.push(t.identifier(INITIAL_STATES_IDENTIFIER_NAME))
         }
         
-        // add hooks dependency
+        // tweak hooks
+        this.initialStateIndex = 0
         path.traverse({
           CallExpression(path) {
             const name = path.node.callee.name
+            // add hooks dependency
             if(ACCEPTED_HOOKS.includes(name)) {
               if(!path.node.arguments[1]) {
                 path.node.arguments[1] = t.arrayExpression()
@@ -128,8 +133,22 @@ function transform(babel) {
                 }
               }
             }
+            // replace stateful hooks
+            if(STATEFUL_HOOKS.includes(name)) {
+              const initialState = isNodeStaticValue(path.node.arguments[0])
+              if(!initialState) {
+                throw path.buildCodeFrameError(STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE)
+              }
+              const member = t.memberExpression(
+                t.identifier(INITIAL_STATES_IDENTIFIER_NAME), 
+                t.numericLiteral(this.initialStateIndex), 
+                true
+              )
+              path.replaceWith(member)
+              this.initialStateIndex++
+            }
           }
-        })
+        }, this)
       },
     }
   }
