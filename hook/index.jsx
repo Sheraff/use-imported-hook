@@ -19,16 +19,16 @@ const empty = () => {}
  */
 
 /**
- * this function lazy loads a hook THAT ONLY CONTAINS a
- * subset of all built-in react hooks
- * - useEffect
- * - useCallback
- * - useMemo
- * - useLayoutEffect
- * - useImperativeHandle
- * - useDebugValue
- * - useState
- * - useRef
+ * @see [readme on GitHub](https://github.com/Sheraff/use-imported-hook#readme)
+ *
+ * @template T what is returned by useImportedHook()
+ * @template U
+ * @param {false | Promise<{default: function(U, string): T}>} importPromise `condition && import('./file.js')`
+ * @param {U} args argument to pass to hook imported by useImportedHook()
+ * @param {T} defaultReturn what is returned when hook isn't imported yet
+ * @param {Array<SlotStatefulHook>} statefulSlots ignore, generated w/ Babel
+ * @param {Array<SlotDependenciesHook | SlotOtherHook>} statelessSlots ignore, generated w/ Babel
+ * @returns {T} while file.js is not loaded: defaultReturn, otherwise: file.js default export function return
  *
  * @example
  * // in Component.jsx
@@ -36,15 +36,6 @@ const empty = () => {}
  *   condition && import("./useCustomHook.jsx"),
  *   { depA, depB },
  *   "`output` when useCustomHook is not loaded",
- *   [
- *     [useState, false],
- *     [useRef, null]
- *   ],
- *   [
- *     [useEffect, 1],
- *     [useCallback, 2],
- *     [useDebugValue]
- *   ],
  * );
  *
  * // in useCustomHook.jsx
@@ -59,18 +50,8 @@ const empty = () => {}
  *   useDebugValue('hello')
  *   return "`output` when useCustomHook is loaded"
  * }
- *
- * @template T what is returned by useImportedHook()
- * @template U
- * @param {false | Promise<{default: function(U, string): T}>} importPromise `condition && import('./file.js')`
- * @param {U} args argument to pass to hook imported by useImportedHook()
- * @param {T} defaultReturn what is returned when hook isn't imported yet
- * @param {Array<SlotStatefulHook>} statefulSlots array of tuples [hook, initialValue] that matches exactly the stateful hooks in file.js
- * @param {Array<SlotDependenciesHook | SlotOtherHook>} statelessSlots array of tuples [hook, dependenciesLength] that matches exactly the rest of the hooks in file.js
- * @returns {T} while file.js is not loaded: defaultReturn, otherwise: file.js default export function return
- *
  */
-export default function useImportedHook(
+ export default function useImportedHook(
 	importPromise,
 	args,
 	defaultReturn,
