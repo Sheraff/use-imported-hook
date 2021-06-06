@@ -84,7 +84,7 @@ In the examples above, `useLazyHook` will only be loaded *if* `load` is true. Th
 
 ```ts
 useImportedHook<T, U>(
-	importPromise: false | Promise<{default: function(U): T}>,
+	importPromise: false | Promise<{default: function(T): U}>,
 	parameters: T?,
 	defaultReturn: U?
 ): U
