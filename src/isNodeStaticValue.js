@@ -1,6 +1,22 @@
-function isInitialStateValid(arg) {
+function staticValueTypeConstructor(t, value) {
+	if (!Array.isArray(value)) {
+		// this is a leaf, return value
+		return value
+	}
+	if (typeof value[0] === 'string') {
+		// this is a constructable value of type ['SomeType', valueA, valueB]
+		const [type, ...values] = value
+		const args = values.map(item => staticValueTypeConstructor(t, item))
+		return t[type](...args)
+	} else {
+		// this is an array of values of type [['SomeType', value], ['SomeType', value]]
+		return value.map(item => staticValueTypeConstructor(t, item))
+	}
+}
+
+function isNodeStaticValue(arg) {
 	if (!arg) {
-		return []
+		return ['EmptyStatement']
 	}
 	if (['NumericLiteral', 'BooleanLiteral', 'StringLiteral'].includes(arg.type)) {
 		return [arg.type, arg.value]
@@ -24,18 +40,32 @@ function isInitialStateValid(arg) {
 		return false
 	}
 	if (arg.type === 'ObjectExpression') {
-		if (arg.properties.length !== 0) {
-			return false
+		const properties = []
+		for(let i = 0; i < arg.properties.length; i++) {
+			const value = isNodeStaticValue(arg.properties[i].value)
+			if(!value) {
+				return false
+			}
+			const key = arg.properties[i].key.name || arg.properties[i].key.value
+			properties.push(['ObjectProperty', ['StringLiteral', key], value])
 		}
-		return ['ObjectExpression']
+		return ['ObjectExpression', properties]
 	}
 	if (arg.type === 'ArrayExpression') {
-		if (arg.elements.length !== 0) {
-			return false
+		const elements = []
+		for(let i = 0; i < arg.elements.length; i++) {
+			const value = isNodeStaticValue(arg.elements[i])
+			if(!value) {
+				return false
+			}
+			elements.push(value)
 		}
-		return ['ArrayExpression']
+		return ['ArrayExpression', elements]
 	}
 	return false
 }
 
-module.exports = isInitialStateValid
+module.exports = {
+	isNodeStaticValue,
+	staticValueTypeConstructor,
+}

@@ -12,8 +12,9 @@ const {
 	ARRAY_LITERAL_ERROR,
 	SPREAD_OPERATOR_ERROR,
 	FORBIDDEN_HOOK_ERROR,
+	STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE,
 } = require('./config')
-const isNodeStaticValue = require('./isNodeStaticValue')
+const {isNodeStaticValue} = require('./isNodeStaticValue')
 
 
 
@@ -46,8 +47,7 @@ const ExtractHooksFromImporteeVisitor = {
 					this.hooks.push({
 						type: 'stateless',
 						name,
-						kind: 'NumericLiteral',
-						value: length,
+						value: ['NumericLiteral', length],
 					})
 				} else if(HOOKS_WITHOUT_DEPS.includes(name)) {
 					this.hooks.push({
@@ -62,8 +62,7 @@ const ExtractHooksFromImporteeVisitor = {
 					this.hooks.push({
 						type: 'stateful',
 						name, 
-						kind: initialState[0],
-						value: initialState[1],
+						value: initialState,
 					})
 				}
 			}

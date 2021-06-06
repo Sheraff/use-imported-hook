@@ -204,13 +204,13 @@ useImportedHook<T, U>(
 		- ✅ `""`, `"hello world"` (all strings)
 		- ✅ `{}` (empty object)
 		- ✅ `[]` (empty array)
+		- ✅ `{a: 1}` (non-empty objects if values are themselves allowed values)
+		- ✅ `[0, 1]` (non-empty arrays if items are themselves allowed values)
 		- ✅ `null`, `undefined`, `NaN`, `Infinity`
 	- Forbidden initial values
 		- ❌ `myVar` (variable identifiers)
 		- ❌ `!0`, `-1`, `+true` (unary expressions)
 		- ❌ `` `hello ${"world"}` `` (template literals)
-		- ❌ `{a: 1}` (non-empty objects)
-		- ❌ `[0, 1]` (non-empty arrays)
 		- ❌ `() => {}` (functions and arrow functions)
 
 

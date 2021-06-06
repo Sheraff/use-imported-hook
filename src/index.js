@@ -14,7 +14,7 @@ const {
   MULTIPLE_IMPORTS_ERROR,
   STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE,
 } = require('./config')
-const isNodeStaticValue = require('./isNodeStaticValue')
+const {isNodeStaticValue, staticValueTypeConstructor} = require('./isNodeStaticValue')
 
 function transform(babel) {
   const { types: t } = babel
@@ -65,11 +65,8 @@ function transform(babel) {
         state.hooks.forEach((descriptor) => {
           const slot = t.arrayExpression()
           slot.elements.push(t.identifier(descriptor.name))
-          if('kind' in descriptor) {
-            const value = typeof descriptor.value === 'undefined' 
-              ? [] 
-              : descriptor.value
-            slot.elements.push(t[descriptor.kind](value))
+          if('value' in descriptor) {
+            slot.elements.push(staticValueTypeConstructor(t, descriptor.value))
           }
           if(descriptor.type === 'stateful') {
             reserveStatefulHooks.elements.push(slot)

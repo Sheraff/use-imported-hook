@@ -17,7 +17,7 @@ addErrorTest('importer-missing-import-call', config.NO_IMPORT_STATEMENT)
 addErrorTest('importer-multiple-imports-2', config.TOO_MANY_IMPORTS)
 addErrorTest('importer-dynamic-import-path', config.NO_DYNAMIC_IMPORT_PATH)
 
-// addOnlyTest('fixtures/importer-multiple-imports/code.js')
+// addOnlyTest('fixtures/importer-complex-initial-states/code.js')
 
 pluginTester({
 	plugin,
