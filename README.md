@@ -196,6 +196,7 @@ useImportedHook<T, U>(
 	}
 	```
 - Not all initial values for `useState` and `useRef` can be extracted statically
+
 	[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
 	- Allowed initial values
 		- ✅ `true` and `false`
