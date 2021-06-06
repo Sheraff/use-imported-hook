@@ -4,6 +4,9 @@ import {
   useMemo,
   useLayoutEffect,
   useImperativeHandle,
+  useState,
+  useRef,
+  useDebugValue,
 } from 'react'
 
 /**
@@ -15,4 +18,7 @@ export default function useTestHook() {
   useMemo(() => {})
   useLayoutEffect(() => {})
   useImperativeHandle(() => {})
+  const a = useState(false)
+  const b = useRef({})
+  useDebugValue('')
 }

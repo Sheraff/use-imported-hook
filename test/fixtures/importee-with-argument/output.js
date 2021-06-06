@@ -5,7 +5,8 @@ import { useEffect } from "react";
 
 export default function useTestHook(
   { a, b },
-  __importableHookAdditionalDependency
+  __importableHookStatelessDependency,
+  __importableHookStatefulReturns
 ) {
-  useEffect(() => {}, [__importableHookAdditionalDependency]);
+  useEffect(() => {}, [__importableHookStatelessDependency]);
 }

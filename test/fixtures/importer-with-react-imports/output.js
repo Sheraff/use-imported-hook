@@ -1,8 +1,16 @@
 import { useMemo, useEffect, useCallback } from "react";
 import useImportedHook from "use-imported-hook";
 export default function useTestHook() {
-  return useImportedHook(import("./hook.jsx"), [
-    [useEffect, []],
-    [useCallback, []],
-  ]);
+  useEffect(() => {}, []);
+  const a = useMemo(() => {}, []);
+  return useImportedHook(
+    import("./hook.jsx"),
+    undefined,
+    undefined,
+    [],
+    [
+      [useEffect, 0],
+      [useCallback, 0],
+    ]
+  );
 }

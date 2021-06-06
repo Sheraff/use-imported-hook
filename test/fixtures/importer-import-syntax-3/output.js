@@ -5,5 +5,11 @@ export default function useTestHook() {
 
   const a = () => import("./hook.jsx");
 
-  return useImportedHook(flag && a(), [[useEffect, []]]);
+  return useImportedHook(
+    flag && a(),
+    undefined,
+    undefined,
+    [],
+    [[useEffect, 0]]
+  );
 }

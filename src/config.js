@@ -1,6 +1,6 @@
 const BABEL_MARKER_COMMENT = '@__IMPORTABLE_HOOK__'
-const EXTRA_DEPENDENCY_IDENTIFIER_NAME = '__importableHookAdditionalDependency'
-const INITIAL_STATES_IDENTIFIER_NAME = '__importableHookInitialStates'
+const EXTRA_DEPENDENCY_IDENTIFIER_NAME = '__importableHookStatelessDependency'
+const INITIAL_STATES_IDENTIFIER_NAME = '__importableHookStatefulReturns'
 
 const ACCEPTED_HOOKS = [
 	'useCallback',
@@ -46,7 +46,7 @@ to make custom hook importable, dependencies shouldn't include any spread elemen
   ✅useEffect(() => {}, [a, b, c])
   ❌useEffect(() => {}, [a, ...myArray])`
 
-const FORBIDDEN_HOOK_ERROR = `cannot use stateful hooks in importable custom hook`
+const FORBIDDEN_HOOK_ERROR = `some hooks aren't supported in importable custom hook: ${FORBIDDEN_HOOKS.join()}`
 
 const TOO_MANY_IMPORTS = 'too many `import()` call expressions in single "useImportedHook" call'
 

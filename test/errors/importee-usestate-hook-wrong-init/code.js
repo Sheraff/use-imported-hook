@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useState } from "react";
 /**
  * @__IMPORTABLE_HOOK__
  */
 
 export default function useTestHook() {
-  useEffect(() => {});
+  const a = {};
+  useState(a);
 }

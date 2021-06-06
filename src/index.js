@@ -55,17 +55,30 @@ function transform(babel) {
           throw path.buildCodeFrameError(NO_MARKER_ERROR)
         }
 
+        // force hook call optional arguments
+        path.node.arguments[1] = path.node.arguments[1] || t.identifier('undefined')
+        path.node.arguments[2] = path.node.arguments[2] || t.identifier('undefined')
+
         // add hooks argument to useImportedHook call
-        const reserveHooksArgument = t.arrayExpression()
+        const reserveStatelessHooks = t.arrayExpression()
+        const reserveStatefulHooks = t.arrayExpression()
         state.hooks.forEach((descriptor) => {
           const slot = t.arrayExpression()
           slot.elements.push(t.identifier(descriptor.name))
           if('kind' in descriptor) {
-            slot.elements.push(t[descriptor.kind](typeof descriptor.value === 'undefined' ? [] : descriptor.value))
+            const value = typeof descriptor.value === 'undefined' 
+              ? [] 
+              : descriptor.value
+            slot.elements.push(t[descriptor.kind](value))
           }
-          reserveHooksArgument.elements.push(slot)
+          if(descriptor.type === 'stateful') {
+            reserveStatefulHooks.elements.push(slot)
+          } else {
+            reserveStatelessHooks.elements.push(slot)
+          }
         })
-        path.node.arguments.splice(1, 0, reserveHooksArgument)
+        path.node.arguments.push(reserveStatefulHooks)
+        path.node.arguments.push(reserveStatelessHooks)
         
         if (state.hooks.length === 0) {
           return

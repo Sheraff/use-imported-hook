@@ -2,5 +2,5 @@ import { useEffect } from "react";
 import useImportedHook from "use-imported-hook";
 const a = import("./hook.jsx");
 export default function useTestHook() {
-  return useImportedHook(a, [[useEffect, []]]);
+  return useImportedHook(a, undefined, undefined, [], [[useEffect, 0]]);
 }

@@ -1,12 +1,13 @@
 # use-imported-hook
 
 [![unit tests](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml)
-![](https://badgen.net/badge/gzip/292%20bytes/cyan)
+![gzipped size](https://badgen.net/badge/gzip/292%20bytes/cyan)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
 
 
 ## Description
 
-This package allows you to dynamically import any stateless hook in a React component!
+This package allows you to dynamically import any hook in a React component!
 
 🎉 Lazy load a component's logic 🎉
 ```jsx
@@ -16,7 +17,7 @@ import useImportedHook from 'use-imported-hook/hook'
 export default function MyComponent() {
 	const [load, setLoad] = useState(false)
 	useImportedHook(
-		load && import('./useStatelessHook.jsx'),
+		load && import('./useLazyHook.jsx'),
 	)
 	return (
 		<button onClick={() => setLoad(true)}>
@@ -33,7 +34,7 @@ import useImportedHook from 'use-imported-hook/hook'
 
 export default function useHook({load, ...props}) {
 	return useImportedHook(
-		load && import('./useStatelessHook.jsx'),
+		load && import('./useLazyHook.jsx'),
 		props
 	)
 }
@@ -41,11 +42,13 @@ export default function useHook({load, ...props}) {
 
 🎉 And still write your importable hook like any hook you're used to 🎉
 ```jsx
-// useStatelessHook.jsx (importee)
-import { useEffect, useCallback } from 'react'
+// useLazyHook.jsx (importee)
+import { useEffect, useCallback, useState } from 'react'
 
 /* @__IMPORTABLE_HOOK__ */
-export default function useStatelessHook({a, b, c}) {
+export default function useLazyHook({a, b, c}) {
+	const [d, setD] = useState(false)
+
 	useEffect(() => {
 		// ...
 	}, [a, b])
@@ -57,7 +60,7 @@ export default function useStatelessHook({a, b, c}) {
 ```
 
 
-In the examples above, `useStatelessHook` will only be loaded *if* `load` is true. This allows you to defer the loading of most of your components' logic (everything that isn't needed for the initial render).
+In the examples above, `useLazyHook` will only be loaded *if* `load` is true. This allows you to defer the loading of most of your components' logic (everything that isn't needed for the initial render).
 
 ## Setup
 
@@ -100,25 +103,29 @@ useImportedHook<T, U>(
 
 	can either be *falsy* in which case the hook won't be loaded, or it can be a the *promise* returned by `import()`. By using it in combination with `import()`, webpack is able to package the hook in a separate chunk and to load it on demand.
 
-	❗ The path passed to `import()` must be a relative path for babel to resolve it properly
+	- ❗ The path passed to `import()` must be a relative path for babel to resolve it properly
 
-	```jsx
-	❌ useImportedHook(bool && import('/src/hooks/useHook.jsx'))
-	```
-	```jsx
-	❌ useImportedHook(bool && import('@alias/useHook.jsx'))
-	```
-	```jsx
-	✅ useImportedHook(bool && import('./useHook.jsx'))
-	```
-	❗ The path passed to `import()` must be a string literal for babel to run a *static code* analysis
+		[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
 
-	```jsx
-	❌ useImportedHook(bool && import(`./${hook}.jsx`))
-	```
-	```jsx
-	✅ useImportedHook(bool && import('./useHook.jsx'))
-	```
+		```jsx
+		❌ useImportedHook(bool && import('/src/hooks/useHook.jsx'))
+		```
+		```jsx
+		❌ useImportedHook(bool && import('@alias/useHook.jsx'))
+		```
+		```jsx
+		✅ useImportedHook(bool && import('./useHook.jsx'))
+		```
+	- ❗ The path passed to `import()` must be a string literal for babel to run a *static code* analysis
+
+		![PRs won't fix](https://img.shields.io/badge/PRs-won't%20fix-red)
+
+		```jsx
+		❌ useImportedHook(bool && import(`./${hook}.jsx`))
+		```
+		```jsx
+		✅ useImportedHook(bool && import('./useHook.jsx'))
+		```
 
 - `parameters` (optional)
 
@@ -161,7 +168,9 @@ useImportedHook<T, U>(
 		useEffect(() => {/*...*/})
 	}
 	```
-- All of your built-in hooks must be in a single function
+- All of your built-in hooks must be in a single function 
+	
+	![PRs won't fix](https://img.shields.io/badge/PRs-won't%20fix-red)
 
 	```jsx
 	❌ function moreStuff() {
@@ -171,7 +180,7 @@ useImportedHook<T, U>(
 	❌ }
 
 	/* @__IMPORTABLE_HOOK__ */
-	export default function useStatelessHook() {
+	export default function useLazyHook() {
 	❌	moreStuff()
 		return useCallback(() => { /* ... */ })
 	}
@@ -179,16 +188,34 @@ useImportedHook<T, U>(
 
 	```jsx
 	/* @__IMPORTABLE_HOOK__ */
-	export default function useStatelessHook() {
+	export default function useLazyHook() {
 	✅	useEffect(() => {
 	✅		// ...
 	✅	})
 		return useCallback(() => { /* ... */ })
 	}
 	```
+- Not all initial values for `useState` and `useRef` can be extracted statically
+	[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+	- Allowed initial values
+		- ✅ `true` and `false`
+		- ✅ `0`, `1`, `2`... (all integers)
+		- ✅ `0.5`, `.1`... (all floats)
+		- ✅ `""`, `"hello world"` (all strings)
+		- ✅ `{}` (empty object)
+		- ✅ `[]` (empty array)
+		- ✅ `null`, `undefined`, `NaN`, `Infinity`
+	- Forbidden initial values
+		- ❌ `myVar` (variable identifiers)
+		- ❌ `!0`, `-1`, `+true` (unary expressions)
+		- ❌ `` `hello ${"world"}` `` (template literals)
+		- ❌ `{a: 1}` (non-empty objects)
+		- ❌ `[0, 1]` (non-empty arrays)
+		- ❌ `() => {}` (functions and arrow functions)
 
 
-## Limitations
+## Limitation: forbidden built-in hooks
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
 
 Currently, only a subset of all built-in Hooks in React are supported *inside* the imported hook:
 - ✅ `useEffect`
@@ -197,35 +224,48 @@ Currently, only a subset of all built-in Hooks in React are supported *inside* t
 - ✅ `useLayoutEffect`
 - ✅ `useImperativeHandle`
 - ✅ `useDebugValue`
-- ❌ `useState`
-- ❌ `useRef`
+- ✅ `useState`
+- ✅ `useRef`
 - ❌ `useReducer`
 - ❌ `useContext`
 
-If your imported hook needs both stateful and stateless built-in hooks, the best approach is to declare the unsupported hooks before `useImportedHook` and pass them as arguments:
+If your imported hook needs to use unsupported built-in hooks, the best approach is to declare the unsupported hooks before `useImportedHook` and pass them as arguments:
 
 ```jsx
 // useHook.jsx (importer)
-import { useRef } from 'react'
+import { useContext } from 'react'
 import useImportedHook from 'use-imported-hook/hook'
 
 export default function useHook({shouldLoad, ...props}) {
-	const a = useRef('hello world')
+	const a = useContext(MyContext)
 	useImportedHook(
-		shouldLoad && import('./useStatelessHook.jsx'),
+		shouldLoad && import('./useLazyHook.jsx'),
 		{...props, a}
 	)
 }
 ```
 ```jsx
-// useStatelessHook.jsx (importee)
+// useLazyHook.jsx (importee)
 import { useEffect } from 'react'
 
 /* @__IMPORTABLE_HOOK__ */
-export default function useStatelessHook({a, b}) {
+export default function useLazyHook({a, b}) {
 	useEffect(() => {
-		console.log(a.current) // hello world
+		console.log(a) // value of `MyContext` provider
 	}, [a, b])
+}
+```
+
+## Limitation: multiple `useImportedHook` per component 
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
+
+Currently, we don't support importing several hooks from within a single component (or hook).
+
+```jsx
+export default function MyComponent() {
+❌	useImportedHook(a && import('./hook1.jsx'))
+❌	useImportedHook(b && import('./hook2.jsx'))
+	return <></>
 }
 ```
 
