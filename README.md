@@ -137,10 +137,9 @@ useImportedHook<T, U>(
 
 **Return value**
 
-- Initially, while `importPromise` is either falsy or pending, `useImportedHook` returns `defaultReturn`. 
+- While `importPromise` is either falsy or pending, `useImportedHook` returns `defaultReturn`. 
 
-- Once `importPromise` resolves, `useImportedHook` will always return whatever the imported hook returns *even if* `importPromise` becomes falsy once again.
-
+- Once `importPromise` is truthy *and* resolves, `useImportedHook` returns whatever the imported hook returns.
 
 ## Syntax for the imported hook
 
