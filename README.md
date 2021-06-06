@@ -1,7 +1,7 @@
 # use-imported-hook
 
 [![unit tests](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Sheraff/use-imported-hook/actions/workflows/tests.yml)
-![gzipped size](https://badgen.net/badge/gzip/292%20bytes/cyan)
+![gzipped size](https://badgen.net/badge/gzip/341%20bytes/cyan)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-green)](http://makeapullrequest.com)
 
 
