@@ -44,7 +44,8 @@ const empty = () => {}
 ) {
 	const [loaded, setLoaded] = useState(false)
 	const isLoading = useRef(false)
-	const importedHook = useRef(/** @type {Hook<args,defaultReturn>} */(null))
+	const importedHook = useRef(/** @type {Hook<T,U>} */(null))
+
 	const isMounted = useRef(true)
 	useEffect(() => () => {
 		isMounted.current = false
