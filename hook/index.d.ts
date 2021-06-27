@@ -28,7 +28,7 @@
  * 
  */
 declare function useImportedHook<T,U>(
-	importPromise: false | Promise<{default: function(T): U}>,
+	importPromise: false | Promise<{default: (args: T) => U}>,
 	args: T,
 	defaultReturn: U,
 ): U;
