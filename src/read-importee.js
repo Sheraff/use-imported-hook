@@ -67,10 +67,13 @@ const ExtractHooksFromImporteeVisitor = {
 					if(!initialState) {
 						throw path.buildCodeFrameError(STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE)
 					}
+					const isEmpty = initialState.length === 1 && initialState[0] === 'EmptyStatement'
 					this.hooks.push({
 						type: 'stateful',
-						name, 
-						value: initialState,
+						name,
+						value: isEmpty
+							? ['Identifier', 'undefined']
+							: initialState,
 					})
 				}
 			}
