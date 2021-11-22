@@ -4,9 +4,9 @@ const {
   BABEL_MARKER_COMMENT,
   EXTRA_DEPENDENCY_IDENTIFIER_NAME,
   INITIAL_STATES_IDENTIFIER_NAME,
-  ACCEPTED_HOOKS,
   STATEFUL_HOOKS,
-  HOOKS_WITHOUT_DEPS,
+  STATELESS_HOOKS,
+  SIMPLEST_HOOKS,
   NO_MARKER_ERROR,
   SINGLE_ARGUMENT_ERROR,
   NO_IMPORT_STATEMENT,
@@ -131,7 +131,7 @@ function transform(babel) {
           CallExpression(path) {
             const name = path.node.callee.name
             // add hooks dependency
-            if(ACCEPTED_HOOKS.includes(name)) {
+            if(STATELESS_HOOKS.includes(name)) {
               if(!path.node.arguments[1]) {
                 path.node.arguments[1] = t.arrayExpression()
               }

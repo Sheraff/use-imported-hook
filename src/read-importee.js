@@ -4,15 +4,17 @@ const nodePath = require('path')
 const traverse = require('@babel/traverse').default
 const {
 	BABEL_MARKER_COMMENT,
-	ACCEPTED_HOOKS,
+	HOOKS_WITH_DEPS,
+	STATELESS_HOOKS,
 	STATEFUL_HOOKS,
-	HOOKS_WITHOUT_DEPS,
+	SIMPLEST_HOOKS,
 	FORBIDDEN_HOOKS,
 	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
 	ARRAY_LITERAL_ERROR,
 	SPREAD_OPERATOR_ERROR,
 	FORBIDDEN_HOOK_ERROR,
 	STATEFUL_HOOKS_NEED_STATIC_INITIAL_STATE,
+	IMPERATIVE_HANDLE_HOOKS,
 } = require('./config')
 const {isNodeStaticValue} = require('./isNodeStaticValue')
 
@@ -33,12 +35,12 @@ const ExtractHooksFromImporteeVisitor = {
 				const name = path.node.callee.name
 				if(FORBIDDEN_HOOKS.includes(name)) {
 					throw path.buildCodeFrameError(FORBIDDEN_HOOK_ERROR + ': ' + name)
-				} else if(ACCEPTED_HOOKS.includes(name)) {
+				} else if(HOOKS_WITH_DEPS.includes(name)) {
 					const dependencies = path.node.arguments[1]
 					if(dependencies && dependencies.type === "Identifier") {
 						throw path.buildCodeFrameError(ARRAY_LITERAL_ERROR)
 					}
-					if(dependencies && dependencies.elements.find(el => el.type === "SpreadElement")) {
+					if(dependencies && dependencies.elements && dependencies.elements.find(el => el.type === "SpreadElement")) {
 						throw path.buildCodeFrameError(SPREAD_OPERATOR_ERROR)
 					}
 					const length = dependencies
@@ -49,7 +51,13 @@ const ExtractHooksFromImporteeVisitor = {
 						name,
 						value: ['NumericLiteral', length],
 					})
-				} else if(HOOKS_WITHOUT_DEPS.includes(name)) {
+				} else if(IMPERATIVE_HANDLE_HOOKS.includes(name)) {
+					this.hooks.push({
+						type: 'stateless',
+						name,
+						value: ['NullLiteral'],
+					})
+				} else if(SIMPLEST_HOOKS.includes(name)) {
 					this.hooks.push({
 						type: 'simple',
 						name

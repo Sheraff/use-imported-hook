@@ -17,8 +17,8 @@ export default function useTestHook() {
   useCallback(() => {})
   useMemo(() => {})
   useLayoutEffect(() => {})
-  useImperativeHandle(() => {})
   const a = useState(false)
   const b = useRef({})
+  useImperativeHandle(b, () => {})
   useDebugValue('')
 }

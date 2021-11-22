@@ -70,7 +70,9 @@ const empty = () => {}
 	const additionalDependency = `${!!importPromise}${loaded}`
 	if (!loaded || !importPromise) {
 		statelessSlots.forEach(([hook, value]) => {
-			if (typeof value === 'number') {
+			if(value === null) { // useImperativeHandle
+				hook(null, () => null)
+			} else if (typeof value === 'number') {
 				hook(empty, [additionalDependency, ...new Array(value).fill(null)])
 			} else {
 				hook()

@@ -3,9 +3,9 @@ import {
   useCallback,
   useMemo,
   useLayoutEffect,
-  useImperativeHandle,
   useState,
   useRef,
+  useImperativeHandle,
   useDebugValue,
 } from "react";
 import useImportedHook from "use-imported-hook";
@@ -23,7 +23,7 @@ export default function useTestHook() {
       [useCallback, 0],
       [useMemo, 0],
       [useLayoutEffect, 0],
-      [useImperativeHandle, 0],
+      [useImperativeHandle, null],
       [useDebugValue],
     ]
   );

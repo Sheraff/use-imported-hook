@@ -21,8 +21,8 @@ export default function useTestHook(
   useCallback(() => {}, [__importableHookStatelessDependency]);
   useMemo(() => {}, [__importableHookStatelessDependency]);
   useLayoutEffect(() => {}, [__importableHookStatelessDependency]);
-  useImperativeHandle(() => {}, [__importableHookStatelessDependency]);
   const a = __importableHookStatefulReturns[0];
   const b = __importableHookStatefulReturns[1];
+  useImperativeHandle(b, () => {});
   useDebugValue("");
 }

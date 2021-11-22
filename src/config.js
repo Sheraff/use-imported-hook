@@ -2,15 +2,23 @@ const BABEL_MARKER_COMMENT = '@__IMPORTABLE_HOOK__'
 const EXTRA_DEPENDENCY_IDENTIFIER_NAME = '__importableHookStatelessDependency'
 const INITIAL_STATES_IDENTIFIER_NAME = '__importableHookStatefulReturns'
 
-const ACCEPTED_HOOKS = [
+const HOOKS_WITH_DEPS = [
 	'useCallback',
 	'useEffect',
 	'useMemo',
 	'useLayoutEffect',
+]
+
+const IMPERATIVE_HANDLE_HOOKS = [
 	'useImperativeHandle',
 ]
 
-const HOOKS_WITHOUT_DEPS = [
+const STATELESS_HOOKS = [
+	...HOOKS_WITH_DEPS,
+	...IMPERATIVE_HANDLE_HOOKS,
+]
+
+const SIMPLEST_HOOKS = [
 	'useDebugValue',
 ]
 
@@ -68,8 +76,10 @@ module.exports = {
 	BABEL_MARKER_COMMENT,
 	EXTRA_DEPENDENCY_IDENTIFIER_NAME,
 	INITIAL_STATES_IDENTIFIER_NAME,
-	ACCEPTED_HOOKS,
-	HOOKS_WITHOUT_DEPS,
+	HOOKS_WITH_DEPS,
+	IMPERATIVE_HANDLE_HOOKS,
+	STATELESS_HOOKS,
+	SIMPLEST_HOOKS,
 	STATEFUL_HOOKS,
 	FORBIDDEN_HOOKS,
 	NO_MARKER_ERROR,

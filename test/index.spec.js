@@ -18,6 +18,7 @@ addErrorTest('importer-multiple-imports-2', config.TOO_MANY_IMPORTS)
 addErrorTest('importer-dynamic-import-path', config.NO_DYNAMIC_IMPORT_PATH)
 
 // addOnlyTest('fixtures/importer-unary-exp-initial-state/code.js')
+// addOnlyTest('fixtures/importer-with-useimperativehandle/code.js')
 
 pluginTester({
 	plugin,
